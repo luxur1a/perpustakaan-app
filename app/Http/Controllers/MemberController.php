@@ -10,11 +10,16 @@ class MemberController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $members = Member::latest()->get();
+        $query = Member::latest();
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $members = $query->get();
         return view('members.index', compact('members'));
-        //
     }
 
     /**
