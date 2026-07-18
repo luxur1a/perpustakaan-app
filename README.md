@@ -50,6 +50,10 @@ Relasi:
 ## Installasi
 
 1. Clone repository
+    ```bash
+    git clone [https://github.com/luxur1a/perpustakaan-app.git]
+    cd perpustakaan-app
+    ```
 2. Salin file lingkungan:
     ```bash
     cp .env.example .env
@@ -99,6 +103,3 @@ php artisan test
 - `/books` - manajemen buku
 - `/borrowings` - manajemen peminjaman
 
-## Lisensi
-
-Lisensi MIT.
