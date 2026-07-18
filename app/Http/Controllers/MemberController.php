@@ -22,7 +22,7 @@ class MemberController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        $members = $query->get();
+        $members = $query->paginate(10)->withQueryString();
         return view('members.index', compact('members'));
     }
 

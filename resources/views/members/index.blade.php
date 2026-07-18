@@ -9,14 +9,11 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
+                    
+                    <!-- Header Aksi: Form Kiri, Tombol Kanan -->
                     <div class="flex justify-between items-center mb-4">
-
-                        <!-- Tombol Tambah Anggota -->
-                        <a href="{{ route('members.create') }}" class="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                            + Tambah Anggota
-                        </a>
-
-                        <!-- Form Pencarian -->
+                        
+                        <!-- Form Pencarian (Sekarang di Kiri) -->
                         <form action="{{ route('members.index') }}" method="GET" class="flex">
                             <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama anggota..." class="border-gray-300 rounded-l-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                             <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded-r-md hover:bg-gray-700 border border-transparent">Cari</button>
@@ -24,12 +21,24 @@
                                 <a href="{{ route('members.index') }}" class="ml-2 inline-flex items-center text-gray-500 hover:text-gray-700">Clear</a>
                             @endif
                         </form>
+
+                        <!-- Tombol Tambah Anggota (Sekarang di Kanan) -->
+                        <a href="{{ route('members.create') }}" class="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                            + Tambah Anggota
+                        </a>
+
                     </div>
+
                     @if (session('success'))
                         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
                             {{ session('success') }}
                         </div>
                     @endif
+
+                    <!-- Info Jumlah Anggota -->
+                    <div class="mb-2 text-sm text-gray-500">
+                        Total <span class="font-bold text-gray-700">{{ $members->total() }}</span> anggota terdaftar
+                    </div>
 
                     <!-- Tabel -->
                     <table class="min-w-full bg-white border">
@@ -66,6 +75,10 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <!-- Tombol Pagination -->
+                    <div class="mt-4">
+                        {{ $members->links() }}
+                    </div>
 
                 </div>
             </div>
