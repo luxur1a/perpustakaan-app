@@ -45,17 +45,29 @@ class BorrowingController extends Controller
             
         ]);
 
+        $activeBorrowings = Borrowing::where('member_id', $request->member_id)
+            ->whereNull('return_date')
+            ->count();
+
+        // Maksimal pinjam 3 buku
+        if($activeBorrowings >= 3){
+            return back()->withErrors(['member_id' => 'Maaf, anggota sudah mencapai batas maksimal peminjaman 3 buku.']);
+        }
+
         try{
             DB::beginTransaction();
 
             $book = Book::findOrFail($request->book_id);
 
+            // Cek stok buku
             if ($book->stock < 1){
                 return back()->withErrors(['book_id' => 'Maaf, stok buku tidak tersedia.']);
             }
 
+            // Kurangi stok buku
             $book->decrement('stock');
 
+            // Buat record peminjaman
             Borrowing::create([
                 'member_id' => $request->member_id,
                 'book_id' => $request->book_id,

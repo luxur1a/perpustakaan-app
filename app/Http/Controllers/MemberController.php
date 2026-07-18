@@ -12,8 +12,12 @@ class MemberController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Member::latest();
+        // Memulai query dengan menghitung jumlah peminjaman aktif (belum dikembalikan)
+        $query = Member::withCount(['borrowings' => function ($q){
+            $q->whereNull('return_date');
+        }])->latest();
 
+        // Fitur pencarian
         if ($request->has('search') && $request->search != '') {
             $query->where('name', 'like', '%' . $request->search . '%');
         }

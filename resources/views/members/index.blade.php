@@ -10,10 +10,13 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
+
+                        <!-- Tombol Tambah Anggota -->
                         <a href="{{ route('members.create') }}" class="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                             + Tambah Anggota
                         </a>
 
+                        <!-- Form Pencarian -->
                         <form action="{{ route('members.index') }}" method="GET" class="flex">
                             <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama anggota..." class="border-gray-300 rounded-l-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                             <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded-r-md hover:bg-gray-700 border border-transparent">Cari</button>
@@ -28,12 +31,14 @@
                         </div>
                     @endif
 
+                    <!-- Tabel -->
                     <table class="min-w-full bg-white border">
                         <thead>
                             <tr class="bg-gray-100">
                                 <th class="py-2 px-4 border-b text-left">No. Anggota</th>
                                 <th class="py-2 px-4 border-b text-left">Nama</th>
                                 <th class="py-2 px-4 border-b text-left">Tanggal Lahir</th>
+                                <th class="py-2 px-4 border-b text-center">Buku Dipinjam</th>
                                 <th class="py-2 px-4 border-b text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -43,6 +48,12 @@
                                     <td class="py-2 px-4 border-b">{{ $member->member_no }}</td>
                                     <td class="py-2 px-4 border-b">{{ $member->name }}</td>
                                     <td class="py-2 px-4 border-b">{{ \Carbon\Carbon::parse($member->date_of_birth)->format('d-m-Y') }}</td>
+                                    <!-- Menampilkan Jumlah Pinjaman -->
+                                    <td class="py-2 px-4 border-b text-center">
+                                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                                            {{ $member->borrowings_count }}
+                                        </span>
+                                    </td>
                                     <td class="py-2 px-4 border-b text-center">
                                         <a href="{{ route('members.edit', $member->id) }}" class="text-yellow-500 hover:underline mr-2">Edit</a>
                                         <form action="{{ route('members.destroy', $member->id) }}" method="POST" class="inline-block">
