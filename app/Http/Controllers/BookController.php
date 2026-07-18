@@ -10,11 +10,32 @@ class BookController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $books = Book::latest()->get();
-        return view('books.index', compact('books'));
-        //
+        $query = Book::query();
+
+        // Filter berdasarkan input user
+        if ($request->has('search') && $request->search != "") {
+            $search = $request->search;
+            
+            $query->where(function($q) use ($search){
+                $q->where('title', 'like', '%' . $search . '%')
+                ->orWhere('publisher', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Ambil parameter sorting
+        $sortBy = $request->get('sort_by', 'created_at');
+        $order = $request->get('order', 'desc');        
+        
+        $allowedColumns = ['title', 'publisher', 'created_at'];
+        
+        if(in_array($sortBy, $allowedColumns)) {
+            $query->orderBy($sortBy, $order);
+        }
+
+        $books = $query->paginate(10)->withQueryString();
+        return view('books.index', compact('books', 'sortBy', 'order'));
     }
 
     /**
