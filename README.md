@@ -54,7 +54,7 @@ Relasi:
     git clone [https://github.com/luxur1a/perpustakaan-app.git]
     cd perpustakaan-app
     ```
-2. Salin file lingkungan:
+2. Salin file environment:
     ```bash
     cp .env.example .env
     ```
