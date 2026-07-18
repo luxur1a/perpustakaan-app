@@ -7,17 +7,45 @@ use App\Models\Member;
 use App\Models\Borrowing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class BorrowingController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $borrowings = Borrowing::with(['member', 'book'])->latest()->get();
-        return view('borrowings.index', compact('borrowings'));
-        //
+        // Menghitung pinjaman aktif
+        $activeBorrowings = Borrowing::whereNull('return_date')->count();
+        // Pinjaman hari ini terakhit
+        $dueTodayBorrowings = Borrowing::whereNull('return_date')
+        ->whereDate('borrow_date', Carbon::today()->subDays(7))
+        ->count();
+
+        // Pinjaman terlambat (belum dikembalikan)
+        $overdueBorrowings = Borrowing::whereNull('return_date')
+        ->whereDate('borrow_date', '<', Carbon::today()->subDays(7))
+        ->count();
+
+        $query = Borrowing::with(['member', 'book'])->latest();
+
+        // Pencarian berdasarkan nama peminjam atau judul buku
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+
+            $query->where(function($q) use ($search){
+                $q->whereHas('member', function($qMember) use ($search) {
+                    $qMember->where('name', 'like', "%".$search."%");
+                })
+                ->orWhereHas('book', function($qBook) use ($search) {
+                    $qBook->where('title', 'like', "%".$search."%");
+                });
+            });
+        }
+
+        $borrowings = $query->paginate(10)->withQueryString();
+        return view('borrowings.index', compact('borrowings', 'activeBorrowings', 'dueTodayBorrowings', 'overdueBorrowings'));
     }
 
     /**
